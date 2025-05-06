@@ -8,6 +8,8 @@ import random, string, requests, time
 from config import *
 from models import db, User, Alert
 from email_utils import send_email
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 app = Flask(__name__)
 app.config.from_object("config")
