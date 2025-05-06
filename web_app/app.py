@@ -4,12 +4,12 @@ from flask_mail import Mail
 from flask_apscheduler import APScheduler
 from werkzeug.security import generate_password_hash, check_password_hash
 import random, string, requests, time
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config import *
 from models import db, User, Alert
 from email_utils import send_email
-import os, sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 app = Flask(__name__)
 app.config.from_object("config")
