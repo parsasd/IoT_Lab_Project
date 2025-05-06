@@ -1,9 +1,10 @@
 import os, sys
+# ensure project root is on PYTHONPATH for config import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from flask import Flask, render_template, redirect, url_for, request, flash, current_app
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from flask_apscheduler import APScheduler
 from werkzeug.security import generate_password_hash, check_password_hash
 import random, string, requests, time
@@ -15,7 +16,10 @@ from email_utils import send_email
 app = Flask(__name__)
 app.config.from_object("config")
 
-# Initialize database and create tables
+# Ensure Flask-Mail has a default sender
+app.config['MAIL_DEFAULT_SENDER'] = app.config.get('MAIL_USERNAME') or 'no-reply@example.com'
+
+# Initialize database
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -119,13 +123,12 @@ def new_alert():
 
 @scheduler.task('interval', id='check_alerts', seconds=60, misfire_grace_time=30)
 def check_alerts():
-    # Run inside app context for DB & Mail
+    # Run inside app context so DB/session and mail work
     with app.app_context():
         alerts = Alert.query.filter_by(sent=False).all()
         if not alerts:
             return
 
-        # Fetch current prices
         res = requests.get(
             "https://api.coingecko.com/api/v3/simple/price",
             params={"ids": ",".join(COIN_LIST), "vs_currencies": VS_CURRENCY}
@@ -138,7 +141,6 @@ def check_alerts():
                 continue
             if (a.direction == "above" and price > a.threshold) or \
                (a.direction == "below" and price < a.threshold):
-                # Send alert to the user’s email
                 send_email(
                     a.user.email,
                     f"Alert: {a.coin} {a.direction} {a.threshold}",
@@ -149,5 +151,5 @@ def check_alerts():
         db.session.commit()
 
 if __name__ == '__main__':
-    # For local development only; in production use a WSGI server
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # For development only; use a real WSGI server in production
+    app.run(host='0.0.0.0', port=5000, debug=False)
