@@ -13,8 +13,8 @@ SECRET_KEY                = "change-this-to-a-secure-random-string"
 SQLALCHEMY_DATABASE_URI   = "sqlite:///app.db"
 MAIL_SERVER               = "smtp.gmail.com"
 MAIL_PORT                 = 587
-MAIL_USERNAME             = "your-email@gmail.com"
-MAIL_PASSWORD             = "your-email-password"
+MAIL_USERNAME             = "parsasedighi70@gmail.com"
+MAIL_PASSWORD             = "Parsa1234"
 MAIL_USE_TLS              = True
 
 # ============ Simulation defaults ============
