@@ -14,6 +14,9 @@ from email_utils import send_email
 app = Flask(__name__)
 app.config.from_object("config")
 db.init_app(app)
+with app.app_context():
+    # ensure tables exist before handling any requests
+   db.create_all()
 mail = Mail(app)
 
 login_manager = LoginManager(app)
@@ -27,9 +30,9 @@ scheduler.start()
 def load_user(uid):
     return User.query.get(int(uid))
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 @app.route('/register', methods=['GET','POST'])
 def register():
