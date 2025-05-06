@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Alerts</h2>
+<a href="{{ url_for('new_alert') }}">+ New Alert</a>
+<ul>
+  {% for a in alerts %}
+    <li>{{ a.coin }} {{ a.direction }} {{ a.threshold }} — Sent? {{ a.sent }}</li>
+  {% else %}
+    <li>No alerts set.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

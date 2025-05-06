@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Create Alert</h2>
+<form method="post">
+  Coin:
+  <select name="coin">
+    {% for c in coins %}
+      <option>{{ c }}</option>
+    {% endfor %}
+  </select><br>
+  Threshold: <input type="number" step="0.01" name="threshold" required><br>
+  Direction:
+  <select name="direction">
+    <option value="above">Above</option>
+    <option value="below">Below</option>
+  </select><br>
+  <button type="submit">Save Alert</button>
+</form>
+{% endblock %}
