@@ -11,12 +11,15 @@ PUBLISH_INTERVAL  = 10               # seconds between publishes
 # ============ Web app ============
 SECRET_KEY                = "change-this-to-a-secure-random-string"
 SQLALCHEMY_DATABASE_URI   = "sqlite:///app.db"
-MAIL_SERVER               = "smtp.gmail.com"
-MAIL_PORT                 = 587
-MAIL_USERNAME             = "your-email@gmail.com"
-MAIL_PASSWORD             = "your-email-password"
-MAIL_USE_TLS              = True
-
+# MAIL_SERVER               = "smtp.gmail.com"
+# MAIL_PORT                 = 587
+# MAIL_USERNAME             = "your-email@gmail.com"
+# MAIL_PASSWORD             = "your-email-password"
+# MAIL_USE_TLS              = True
+MAIL_SERVER   = "localhost"
+MAIL_PORT     = 1025
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
 # ============ Simulation defaults ============
 INDICATOR_WINDOWS = {
     "short": {"sma": 10, "ema": 10, "rsi": 7, "macd_fast": 12, "macd_slow": 26, "macd_signal": 9, "bb_window": 20},
