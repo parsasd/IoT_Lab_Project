@@ -1,19 +1,28 @@
 {% extends "base.html" %}
+{% block title %}{% if form_title %}{{ form_title }}{% else %}Create Alert{% endif %} - Crypto IoT{% endblock %} {# Allow dynamic title for edit mode #}
 {% block content %}
-<h2>Create Alert</h2>
-<form method="post">
-  Coin:
-  <select name="coin">
-    {% for c in coins %}
-      <option>{{ c }}</option>
-    {% endfor %}
-  </select><br>
-  Threshold: <input type="number" step="0.01" name="threshold" required><br>
-  Direction:
-  <select name="direction">
-    <option value="above">Above</option>
-    <option value="below">Below</option>
-  </select><br>
-  <button type="submit">Save Alert</button>
-</form>
+  <h2>{% if form_title %}{{ form_title }}{% else %}Create a New Alert{% endif %}</h2>
+  <form method="post">
+    <div>
+      <label for="coin">Coin:</label>
+      <select name="coin" id="coin">
+        {% for c in coins %}
+          {# Assuming 'alert' object is passed for edit mode #}
+          <option value="{{ c }}" {% if alert and alert.coin == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="threshold">Threshold Price (in {{ VS_CURRENCY | upper }}):</label> {# Assuming VS_CURRENCY is available #}
+      <input type="number" step="0.01" id="threshold" name="threshold" value="{{ alert.threshold if alert else '' }}" required>
+    </div>
+    <div>
+      <label for="direction">Alert me when price is:</label>
+      <select name="direction" id="direction">
+        <option value="above" {% if alert and alert.direction == 'above' %}selected{% endif %}>Above threshold</option>
+        <option value="below" {% if alert and alert.direction == 'below' %}selected{% endif %}>Below threshold</option>
+      </select>
+    </div>
+    <button type="submit">{% if alert %}Save Changes{% else %}Save Alert{% endif %}</button>
+  </form>
 {% endblock %}

@@ -8,12 +8,17 @@ from flask_mail import Mail, Message
 from flask_apscheduler import APScheduler
 from werkzeug.security import generate_password_hash, check_password_hash
 import random, string, requests, time
+import datetime
 
 from config import *
 from models import db, User, Alert
 from email_utils import send_email
 
+@context_processor
+def inject_now():
+    return {'now': datetime.datetime.utcnow()}
 app = Flask(__name__)
+
 app.config.from_object("config")
 
 # Ensure Flask-Mail has a default sender
@@ -129,24 +134,64 @@ def check_alerts():
         if not alerts:
             return
 
-        res = requests.get(
-            "https://api.coingecko.com/api/v3/simple/price",
-            params={"ids": ",".join(COIN_LIST), "vs_currencies": VS_CURRENCY}
-        ).json()
+        # Fetch current prices
+        # It's more efficient to get all coin prices once
+        coin_ids_to_fetch = list(set(a.coin for a in alerts if a.coin in COIN_LIST))
+        if not coin_ids_to_fetch: # handles case where alerts are for coins not in COIN_LIST
+            current_app.logger.warning("No alerts for coins in COIN_LIST to check.")
+            return
+
+        try:
+            res = requests.get(
+                "https://api.coingecko.com/api/v3/simple/price",
+                params={"ids": ",".join(coin_ids_to_fetch), "vs_currencies": VS_CURRENCY}
+            )
+            res.raise_for_status()  # Raise an exception for HTTP errors
+            prices_data = res.json()
+        except requests.exceptions.RequestException as e:
+            current_app.logger.error(f"Failed to fetch prices from CoinGecko: {e}")
+            return # Skip this run if API call fails
+        except ValueError as e: # Catches JSON decoding errors
+            current_app.logger.error(f"Failed to decode JSON from CoinGecko: {e}")
+            return
+
 
         ts = time.strftime("%Y-%m-%d %H:%M:%S")
+        users_cache = {} # Cache user objects to avoid redundant queries
+
         for a in alerts:
-            price = res.get(a.coin, {}).get(VS_CURRENCY)
+            # Get the user for this alert
+            if a.user_id in users_cache:
+                user = users_cache[a.user_id]
+            else:
+                user = User.query.get(a.user_id)
+                if user:
+                    users_cache[a.user_id] = user
+                else:
+                    current_app.logger.warning(f"User with ID {a.user_id} not found for alert ID {a.id}. Skipping.")
+                    continue # Skip this alert if user not found
+
+            price = prices_data.get(a.coin, {}).get(VS_CURRENCY)
+
             if price is None:
+                current_app.logger.warning(f"Price not found for coin {a.coin} (vs {VS_CURRENCY}). Alert ID: {a.id}")
                 continue
+
+            price = float(price) # Ensure price is a float for comparison
+
             if (a.direction == "above" and price > a.threshold) or \
                (a.direction == "below" and price < a.threshold):
-                send_email(
-                    a.user.email,
-                    f"Alert: {a.coin} {a.direction} {a.threshold}",
-                    f"At {ts}, {a.coin} price is {price}"
-                )
-                a.sent = True
+                try:
+                    send_email(
+                        user.email, # Now using the explicitly fetched user's email
+                        f"Alert: {a.coin} {a.direction} {a.threshold}",
+                        f"At {ts}, {a.coin} price is {price} {VS_CURRENCY.upper()}"
+                    )
+                    a.sent = True
+                    current_app.logger.info(f"Sent alert for coin {a.coin} to {user.email}")
+                except Exception as e:
+                    current_app.logger.error(f"Failed to send email to {user.email} for alert ID {a.id}: {e}")
+
 
         db.session.commit()
 

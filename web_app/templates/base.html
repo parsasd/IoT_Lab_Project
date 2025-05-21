@@ -1,19 +1,38 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <title>Crypto IoT</title>
-</head>
+  <title>{% block title %}Crypto IoT{% endblock %}</title> </head>
 <body>
-  <nav>
-    {% if current_user.is_authenticated %}
-      <a href="{{ url_for('dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-      <a href="{{ url_for('login') }}">Login</a>
-      <a href="{{ url_for('register') }}">Register</a>
-    {% endif %}
-  </nav>
-  <div class="content">{% block content %}{% endblock %}</div>
+  <header>
+    <nav>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' else '' }}">Dashboard</a>
+        <a href="{{ url_for('new_alert') }}" class="{{ 'active' if request.endpoint == 'new_alert' else '' }}">New Alert</a>
+        <a href="{{ url_for('logout') }}">Logout ({{ current_user.email }})</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="{{ 'active' if request.endpoint == 'login' else '' }}">Login</a>
+        <a href="{{ url_for('register') }}" class="{{ 'active' if request.endpoint == 'register' else '' }}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+        {% for category, message in messages %}
+          <li class="flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center mt-2 mb-1">
+    <p>&copy; {{ now.year }} Crypto IoT Project</p> </footer>
 </body>
 </html>

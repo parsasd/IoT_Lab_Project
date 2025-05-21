@@ -1,3 +1,184 @@
-body { font-family: sans-serif; margin: 20px; }
-nav a { margin-right: 15px; }
-.content { margin-top: 20px; }
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, clean font */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6; /* Light, neutral background */
+    color: #333; /* Darker text for readability */
+    line-height: 1.6;
+}
+
+.container {
+    width: 80%;
+    margin: 2rem auto; /* Add some vertical spacing and center */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Navigation */
+nav {
+    background-color: #333; /* Dark navbar for contrast */
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover, nav a.active { /* Add an active class via Flask/Jinja */
+    background-color: #555;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #333; /* Consistent heading color */
+    margin-bottom: 1rem; /* Space below headings */
+}
+
+h2 {
+    border-bottom: 2px solid #eee; /* Subtle separator for H2 */
+    padding-bottom: 0.5rem;
+}
+
+/* Forms */
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+form input[type="email"],
+form input[type="password"],
+form input[type="text"], /* Added for other potential text inputs */
+form input[type="number"],
+form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    font-size: 1rem;
+}
+
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="text"]:focus,
+form input[type="number"]:focus,
+form select:focus {
+    border-color: #007bff; /* Highlight on focus */
+    outline: none;
+}
+
+
+button, .button-link { /* Class for styling links as buttons */
+    background-color: #007bff; /* Primary button color (e.g., blue) */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none; /* For .button-link */
+    display: inline-block; /* For .button-link */
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Space above button */
+}
+
+button:hover, .button-link:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Flash Messages (Alerts) */
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.flash-messages li {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border-left-width: 5px;
+    border-left-style: solid;
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
+}
+
+.flash-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left-color: #ffc107;
+}
+
+.flash-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left-color: #dc3545;
+}
+
+/* Dashboard Specific */
+.alerts-list {
+    list-style: none;
+    padding: 0;
+}
+
+.alerts-list li {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-actions a { /* For potential edit/delete buttons */
+    margin-left: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+.alert-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    nav a {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+}

@@ -1,12 +1,33 @@
 {% extends "base.html" %}
+{% block title %}Dashboard - Crypto IoT{% endblock %}
 {% block content %}
-<h2>Your Alerts</h2>
-<a href="{{ url_for('new_alert') }}">+ New Alert</a>
-<ul>
-  {% for a in alerts %}
-    <li>{{ a.coin }} {{ a.direction }} {{ a.threshold }} — Sent? {{ a.sent }}</li>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>Your Alerts</h2>
+    <a href="{{ url_for('new_alert') }}" class="button-link">+ New Alert</a>
+  </div>
+
+  {% if alerts %}
+    <ul class="alerts-list mt-1">
+      {% for a in alerts %}
+        <li>
+          <span>
+            <strong>{{ a.coin }}</strong> - {{ a.direction|capitalize }} <strong>{{ "%.2f"|format(a.threshold) }}</strong>
+          </span>
+          <span>
+            Status: <strong class="{{ 'text-success' if a.sent else 'text-warning' }}">{% if a.sent %}Sent{% else %}Pending{% endif %}</strong>
+            {# Add edit/delete actions later if desired #}
+            {# <span class="alert-actions">
+                 <a href="{{ url_for('edit_alert', alert_id=a.id) }}">Edit</a>
+                 <a href="{{ url_for('delete_alert', alert_id=a.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </span> #}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
   {% else %}
-    <li>No alerts set.</li>
-  {% endfor %}
-</ul>
+    <div class="text-center mt-2">
+      <p>You haven't set up any alerts yet.</p>
+      <a href="{{ url_for('new_alert') }}" class="button-link mt-1">Create Your First Alert</a>
+    </div>
+  {% endif %}
 {% endblock %}

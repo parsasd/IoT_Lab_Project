@@ -1,8 +1,14 @@
 {% extends "base.html" %}
+{% block title %}Confirm Email - Crypto IoT{% endblock %}
 {% block content %}
-<h2>Confirm Your Email</h2>
-<form method="post">
-  Enter code sent to {{ email }}: <input name="code" required><br>
-  <button type="submit">Confirm</button>
-</form>
+  <h2>Confirm Your Email</h2>
+  <p>A confirmation code was sent to <strong>{{ email }}</strong>. Please enter it below.</p>
+  <form method="post">
+    <div>
+      <label for="code">Confirmation Code:</label>
+      <input type="text" id="code" name="code" required maxlength="6" pattern="\d{6}" title="Enter the 6-digit code">
+    </div>
+    <button type="submit">Confirm Email</button>
+  </form>
+  <p class="mt-1">Didn't receive the code? <a href="{{ url_for('register') }}">Try registering again</a> or check your spam folder.</p> {# Consider adding a "resend code" feature later #}
 {% endblock %}
