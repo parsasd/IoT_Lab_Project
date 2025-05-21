@@ -14,9 +14,7 @@ from config import *
 from models import db, User, Alert
 from email_utils import send_email
 
-@context_processor
-def inject_now():
-    return {'now': datetime.datetime.utcnow()}
+
 app = Flask(__name__)
 
 app.config.from_object("config")
